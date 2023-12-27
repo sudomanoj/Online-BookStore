@@ -1,0 +1,29 @@
+<nav class="navbar navbar-expand-lg bg-dark navbar-dark d-flex justify-content-center">
+    <div class="container-fluid">
+        
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav mx-auto mb-2 mb-lg-0">
+                <li class="nav-item mx-5">
+                    <a class="nav-link active" aria-current="page" href='{% url "home" %}'>Add Post</a>
+                </li>
+                <li class="nav-item mx-5">
+                  <a class="nav-link active" aria-current="page" href='{% url "home" %}'>Post List</a>
+               </li>
+               {% if not request.user.is_authenticated %}
+               <li class="nav-item mx-5">
+                <a class="nav-link active" aria-current="page" href='{% url "usersignup" %}'>SignUp</a>
+            </li>
+               <li class="nav-item mx-5">
+                <a class="nav-link active" aria-current="page" href='{% url "userlogin" %}'>Login</a>
+                </li>
+                {% else %}
+                <li class="nav-item mx-5">
+                    <a class="nav-link active" aria-current="page" href='{% url "userlogout" %}'>Logout</a>
+                </li>
+                {% endif %}
+                    
+            </ul>
+        </div>
+    </div>
+  </nav>
+  
