@@ -1,7 +1,9 @@
 from django import forms
-from django.contrib.auth.forms import UserCreationForm, AuthenticationForm, UserChangeForm, UsernameField
-# from django.contrib.auth.models import User
-from manageapp.models import User
+from django.contrib.auth.forms import UserCreationForm, AuthenticationForm, UserChangeForm, UsernameField, SetPasswordForm, PasswordResetForm
+from django.contrib.auth import get_user_model
+from manageapp.models import User, Customer
+
+
 
 class SignupForm(UserCreationForm):
     password1 = forms.CharField(label='Password', widget=forms.PasswordInput(attrs={'class':'form-control'}))
@@ -16,6 +18,23 @@ class SignupForm(UserCreationForm):
                    'email':forms.EmailInput(attrs={'class': 'form-control'})
                    }
 
+
+class CustomerProfileForm(forms.ModelForm):
+    class Meta:
+        model = Customer
+        fields = ['name', 'city', 'zipcode']
+        widgets = {
+            'name':forms.TextInput(attrs={'class':'form-control'}),
+            'city':forms.Select(attrs={'class':'form-control'}),
+            'locality':forms.TextInput(attrs={'class':'form-control'}),
+            'zipcode':forms.NumberInput(attrs={'class':'form-control'}),
+                   }
+        labels = {
+            'locality':'Tole',
+            'city':'Area',
+        }
+        
+        
 class LoginForm(AuthenticationForm):
     username = forms.EmailField(
         label='Email',
@@ -29,3 +48,32 @@ class LoginForm(AuthenticationForm):
     )
 
         
+        
+class CustomSetPasswordForm(SetPasswordForm):
+    new_password1 = forms.CharField(
+        label='New Password',
+        widget=forms.PasswordInput(attrs={"autofocus": True, 'class': 'form-control'}),
+        required=True
+    )
+    new_password2 = forms.CharField(
+        label='Confirm Password',
+        widget=forms.PasswordInput(attrs={"autofocus": True, 'class': 'form-control'}),
+        required=True
+    )
+    class Meta:
+        model = get_user_model()
+        # fields = ['newpassword1', 'newpassword2']
+        
+class PasswordResetForm(PasswordResetForm):
+    
+    email = forms.EmailField(
+        label='Email',
+        widget=forms.TextInput(attrs={"autofocus": True, 'class': 'form-control'}),
+        required=True
+    )
+    class Meta:
+        model = get_user_model
+        fields = ['email']
+        
+
+    # captcha = 

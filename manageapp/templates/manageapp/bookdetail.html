@@ -1,0 +1,47 @@
+{% extends 'manageapp/base.html' %}
+{% load static %}
+{% block title %}Book Detail{% endblock title %}
+{% block main-content %}
+<div class="container my-5">
+ <div class="row">
+  <div class="col-sm-6 text-center align-self-center">
+   <img src="{{book.book_image.url}}" alt="" class="img-fluid img-thumbnail">
+  </div>
+  <div class="col-sm-5 offset-sm-1">
+   <h2>Book Title: {{book.title}}</h2>
+   <hr>
+   <p>Book Description: {{book.description}}</p> <br>
+   <h4 class='text-dark'>Rs. {{book.discounted_price}} <small class="fw-light text-decoration-line-through">{{book.selling_price}}</small></h4> <br>
+
+{% if request.user.is_authenticated %}
+    {% if item_already_in_cart %}
+    <a href="" class="btn btn-primary shadow px-5 py-2">Goto Cart</a>
+    {% else %}
+   <form action="" class='d-inline'>
+    <input type="hidden" name='book_id' value={{book.id}} id='book_id'>
+    <button type="submit" class='btn btn-success shadow px-5 py-2'>Add to Cart</button>
+   </form>
+   {% endif %}
+   {% endif %}
+
+   {% if not request.user.is_authenticated %}
+   <form action="" class='d-inline'>
+    <input type="hidden" name='book_id' value={{book.id}} id='book_id'>
+    <button type="submit" class='btn btn-success shadow px-5 py-2'>Add to Cart</button>
+   </form>
+   {% endif %}
+
+
+
+   <a href="" class="btn btn-danger shadow px-5 py-2 ms-4">Buy Now</a>
+   <h5 class="mt-5">Available Offers</h5>
+   <ul>
+    <li>Bank Offer 5% Unlimited Cashback on NIC Asia Bank Credit</li>
+    <li>Special Price Get extra Rs.3000 off (price inclusive of discount)</li>
+    <li>No cost EMI Rs.1,650/month. Standard EMI also available</li>
+    <li>Partner Offer Rs.2000 Flipkart Gift Card on Every 1000th Transaction with a new Visa Debit/Credit Card</li>
+   </ul>
+  </div>
+ </div>
+</div>
+{% endblock main-content %}
