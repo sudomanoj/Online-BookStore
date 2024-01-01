@@ -1,0 +1,34 @@
+{% extends "manageapp/base.html" %}
+{% load static %}
+{% block title %}Books Home{% endblock title %}
+
+{% block main-content %}
+<div class="row">
+    <div class="col-10 mx-auto">
+        {% if books %}
+        {% for book in books %}
+        <div class="container my-5">
+            <div class="row">
+             <div class="col-sm-6 text-center align-self-center">
+              <img src="{{book.book_image.url}}" alt="" class="img-fluid img-thumbnail">
+             </div>
+             <div class="col-sm-5 offset-sm-1">
+              <h2>Book Title: {{book.title}}</h2>
+              <hr>
+              <p>Book Description: {{book.description}}</p> <br>
+              <h4 class='text-dark'>Rs. {{book.discounted_price}} <small class="fw-light text-decoration-line-through">{{book.selling_price}}</small></h4> <br>
+
+              <form action="{% url "wishlist" %}"  method = 'post' class='d-inline'>
+                {% csrf_token %}
+                <input type="hidden" name='book_id' value={{book.id}} id='book_id'>
+                <button type="submit" class='btn btn-success shadow px-5 py-2'>Add to Wishlist</button>
+               </form>
+
+            </div>
+
+             </div>
+        {% endfor %}
+        {% endif %}
+    </div>
+</div>
+{% endblock main-content %}

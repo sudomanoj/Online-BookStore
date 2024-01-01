@@ -1,6 +1,6 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponse
-from manageapp.forms import LoginForm, SignupForm, CustomSetPasswordForm, PasswordResetForm
+from manageapp.forms import LoginForm, SignupForm, CustomSetPasswordForm, PasswordResetForm, ReviewForm
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -11,7 +11,7 @@ from django.core.mail import EmailMessage
 from django.template.loader import render_to_string
 from django.contrib.sites.shortcuts import get_current_site
 from manageapp.tokens import account_activation_token
-from manageapp.models import User, Cart, Customer, Book
+from manageapp.models import User, Cart, Customer, Book, Review, WishList
 from django.contrib.auth import login, logout, authenticate
 from django.db.models import Q
 
@@ -19,32 +19,97 @@ from django.db.models import Q
 class BookView(View):
     def get(self, request, *args, **kwargs):
         books = Book.objects.all()
-        return render(request, 'manageapp/base.html', {'books':books})
+        return render(request, 'manageapp/home.html', {'books':books})
     
 class BookDetailView(LoginRequiredMixin, View):
     login_url = 'userlogin'
     def get(self, request, pk):
         book = Book.objects.get(pk=pk)
         book_already_in_cart = False
+        reviews = Review.objects.filter(book=book)
         count = 0
+        form = ReviewForm()
         if request.user.is_authenticated:
             book_already_in_cart = Cart.objects.filter(Q(user=request.user) & Q(book=book.id)).exists()
             count = Cart.objects.filter(user=request.user).count()
             context = {
                 'book':book,
                 'book_already_in_cart':book_already_in_cart,
-                'count':count
+                'count':count,
+                'reviews':reviews,
+                'form':form
             }
         return render(request, 'manageapp/bookdetail.html', context=context)
+
+    def post(self, request, *args, **kwargs):
+        book = Book.objects.get(pk=pk)
+        form = ReviewForm(request.POST)
+        if form.is_valid():
+            review = form.save(commit=False)
+            review.book = book
+            review.user = request.user
+            review.save()
+            messages.success(request, 'Review Submitted Successfully!')
+            return redirect('bookdetail', id=pk)
+
+class WishListView(View):
+    def get(self, request, *args, **kwargs):
+        wishlist, created = WishList.objects.get_or_create(user=request.user)
+        return render(request, 'manageapp/wishlist.html', {'wishlist': wishlist})
     
+    def post(self, request, *args, **kwargs):
+        wishlist, created = WishList.objects.get_or_create(user=request.user)
+        book_id = request.POST.get('book_id')
+        book = get_object_or_404(Book, id=book_id)
+        wishlist.books.add(book)
+        messages.success(request, 'Book has beeen added to wishlist!')
+        return redirect('home')
+        
+def rmviawishlist(request, id):
+    wishlist = get_object_or_404(WishList, user=request.user)   
+    book = get_object_or_404(Book, id=id)
+    wishlist.books.remove(book)
+    messages.success(request, f'Book {book.title} has removed!')
+    return redirect('wishlist')
+        
+        
 def search(request):
     query = request.POST.get('search', '')
     book = None
     if query:
         book = Book.objects.filter(Q(genre__icontains=query))
-    return render(request, 'manageapp/search_results.html', {'query':'query', 'book':book} )
+    return render(request, 'manageapp/search_results.html', {'query':query, 'book':book} )
         
- 
+@login_required
+def add_to_cart(request):
+    user = request.user
+    book_id = request.GET.get('book_id')
+    book = Book.objects.get(id=book_id)
+    Cart(user=user, book=book).save()
+    return redirect('showcart')
+    
+@login_required
+def show_cart(request):
+    if request.user.is_authenticated:
+        user = request.user
+        cart = Cart.objects.filter(user=request.user)
+        count = Cart.objects.filter(user=user).count()
+        amount = 0.0
+        shipping_fee = 0.0
+        total_amount = 0.0
+        book_in_cart = [b for b in Cart.objects.all() if b.user == user]
+        if book_in_cart:
+            for b in book_in_cart:
+                if b.quantity >= 1:
+                    shipping_fee = 50
+                temp_amount = b.quantity * b.book.discounted_price
+                amount += temp_amount
+                total_amount = amount + shipping_fee
+                context = {'cart':cart, 'amount':amount, 'total_amount':total_amount, 'shipping_fee':shipping_fee, 'count':count}
+                return render(request, 'manageapp/addtocart.html', context)
+        else:
+            return render(request, 'manageapp/emptycart.html')
+    
  
  
 

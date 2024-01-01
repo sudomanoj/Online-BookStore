@@ -1,7 +1,7 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm, UserChangeForm, UsernameField, SetPasswordForm, PasswordResetForm
 from django.contrib.auth import get_user_model
-from manageapp.models import User, Customer
+from manageapp.models import User, Customer, Review
 
 
 
@@ -34,6 +34,24 @@ class CustomerProfileForm(forms.ModelForm):
             'city':'Area',
         }
         
+
+class ReviewForm(forms.ModelForm):
+    class Meta:
+        model = Review
+        fields = ['rating', 'review']
+        widgets = {
+            'rating': forms.RadioSelect(choices=[(i, i) for i in range(1, 6)], attrs={'class':'form-control'}),
+            'review': forms.Textarea(attrs={'class':'form-control', 'rows':4}),
+        }
+    
+   
+   
+   
+   
+   
+   
+   
+   
         
 class LoginForm(AuthenticationForm):
     username = forms.EmailField(

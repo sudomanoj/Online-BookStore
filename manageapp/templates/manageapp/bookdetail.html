@@ -43,5 +43,27 @@
    </ul>
   </div>
  </div>
+ <div class="row mt-5">
+    <div class="col-sm-10 mx-auto">
+        {% if reviews %}
+        <h2>Reviews</h2>
+  {% for review in reviews %}
+    <p>{{ review.user.email }} - {{ review.created_at }} - Rating: {{ review.rating }}</p>
+    <p class='text-danger'>{{ review.review }}</p>
+  {% endfor %}
+        {% endif %}
+        <h2>Add review</h2>
+        <form method="post" action="">
+            {% csrf_token %}
+            {% for fm in form %}
+            <div class="form-group">
+                {{fm.label}} {{fm}}
+                <p><small class="text-warning">{{fm.errors|striptags}}</small></p>
+            </div>
+            {% endfor %}
+            <input type="submit" value="Submit" class="btn btn-primary my-2">
+        </form>
+    </div>
+ </div>
 </div>
 {% endblock main-content %}

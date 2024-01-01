@@ -49,6 +49,7 @@ class Book(models.Model):
     title = models.CharField(max_length=100)
     author = models.CharField(max_length=50)
     genre = models.CharField(choices=genre_choices, max_length=50)
+    description = models.CharField(max_length=500)
     book_image = models.ImageField(upload_to='booksimage')
     selling_price = models.FloatField()
     discounted_price = models.FloatField()
@@ -62,7 +63,7 @@ class Cart(models.Model):
     quantity = models.PositiveIntegerField(default=1)
 
     def __str__(self):
-        return self.user
+        return self.user.email
     
     @property
     def total_cost(self):
@@ -89,3 +90,21 @@ class OrderedPlaced(models.Model):
     def total_cost(self):
         return self.quantity * self.product.discounted_price   
 
+
+class Review(models.Model):
+    book = models.ForeignKey(Book, on_delete=models.CASCADE, related_name='reviews')
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    rating = models.PositiveIntegerField(choices=[(i,i) for i in range(1, 6)])
+    review = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+    
+    def __str__(self):
+        return f"{self.user.email} - {self.book.title}"
+    
+class WishList(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    books = models.ManyToManyField(Book)
+
+    def __str__(self):
+        return f" WishList For {self.user.email}"
+    

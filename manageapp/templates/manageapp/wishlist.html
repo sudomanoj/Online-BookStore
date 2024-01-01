@@ -1,0 +1,27 @@
+{% extends "manageapp/base.html" %}
+{% block title %}Wishlist{% endblock title %}
+
+{% block main-content %}
+<div class="row mt-5">
+    <div class="col-10 mx-auto">
+        <h2 class="text-center text-success">Wishlist For {{request.user.first_name}} {{request.user.last_name}}</h2>
+        <hr>
+        {% if wishlist.books.all %}
+        {% for book in wishlist.books.all %}
+        
+        <div class="col-sm-6 text-center align-self-center mx-auto">
+            <img src="{{book.book_image.url}}" alt="" class="img-fluid img-thumbnail">
+            <h2>Book Title: {{book.title}}</h2>
+            <hr>
+            <p>Book Description: {{book.description}}</p> <br>
+            <a href="{% url "removefromwishlist" book.id %}" class="btn btn-danger my-3 text-center">Remove From WishList</a>
+        </div>
+
+        
+
+        {% endfor %}
+        {% endif %}
+    </div>
+
+</div>
+{% endblock main-content %}
