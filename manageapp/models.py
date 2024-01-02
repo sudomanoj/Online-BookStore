@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
 from manageapp.managers import UserManager
+from tinymce.models import HTMLField
 
 ################# Custom User Model ##################
 class User(AbstractBaseUser, PermissionsMixin):
@@ -49,7 +50,7 @@ class Book(models.Model):
     title = models.CharField(max_length=100)
     author = models.CharField(max_length=50)
     genre = models.CharField(choices=genre_choices, max_length=50)
-    description = models.CharField(max_length=500)
+    description = HTMLField()
     book_image = models.ImageField(upload_to='booksimage')
     selling_price = models.FloatField()
     discounted_price = models.FloatField()

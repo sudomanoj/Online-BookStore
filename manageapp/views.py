@@ -1,12 +1,13 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponse
-from manageapp.forms import LoginForm, SignupForm, CustomSetPasswordForm, PasswordResetForm, ReviewForm
+from manageapp.forms import LoginForm, SignupForm, CustomSetPasswordForm, PasswordResetForm, ReviewForm, AddBookForm
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views import View
 from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
 from django.utils.encoding import force_bytes, force_str
+from django.utils.decorators import method_decorator
 from django.core.mail import EmailMessage
 from django.template.loader import render_to_string
 from django.contrib.sites.shortcuts import get_current_site
@@ -14,6 +15,7 @@ from manageapp.tokens import account_activation_token
 from manageapp.models import User, Cart, Customer, Book, Review, WishList
 from django.contrib.auth import login, logout, authenticate
 from django.db.models import Q
+
 
 
 class BookView(View):
@@ -41,7 +43,8 @@ class BookDetailView(LoginRequiredMixin, View):
             }
         return render(request, 'manageapp/bookdetail.html', context=context)
 
-    def post(self, request, *args, **kwargs):
+
+    def post(self, request, pk):
         book = Book.objects.get(pk=pk)
         form = ReviewForm(request.POST)
         if form.is_valid():
@@ -50,9 +53,11 @@ class BookDetailView(LoginRequiredMixin, View):
             review.user = request.user
             review.save()
             messages.success(request, 'Review Submitted Successfully!')
-            return redirect('bookdetail', id=pk)
+            return redirect('bookdetail', pk=pk)
 
+@method_decorator(login_required, name='dispatch')
 class WishListView(View):
+    login_url = 'userlogin'
     def get(self, request, *args, **kwargs):
         wishlist, created = WishList.objects.get_or_create(user=request.user)
         return render(request, 'manageapp/wishlist.html', {'wishlist': wishlist})
@@ -111,7 +116,18 @@ def show_cart(request):
             return render(request, 'manageapp/emptycart.html')
     
  
- 
+
+def addbooks(request):
+    form = AddBookForm()
+    if request.method == 'POST':
+        form = AddBookForm(request.POST)
+        if form.is_valid():
+            book = form.save()
+            messages.success(request, f'Book {request.POST.get("title")} is saved!')
+            print(f'Book {request.POST.get("title")} is saved!')
+            return redirect('home')
+    return render(request, 'manageapp/addbook.html', {'form':form})
+
 
 
 

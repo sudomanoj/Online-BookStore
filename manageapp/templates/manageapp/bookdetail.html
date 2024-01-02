@@ -10,7 +10,7 @@
   <div class="col-sm-5 offset-sm-1">
    <h2>Book Title: {{book.title}}</h2>
    <hr>
-   <p>Book Description: {{book.description}}</p> <br>
+   <p>Book Description: {{book.description|safe }}</p> <br>
    <h4 class='text-dark'>Rs. {{book.discounted_price}} <small class="fw-light text-decoration-line-through">{{book.selling_price}}</small></h4> <br>
 
 {% if request.user.is_authenticated %}
@@ -53,7 +53,7 @@
   {% endfor %}
         {% endif %}
         <h2>Add review</h2>
-        <form method="post" action="">
+        <form method="post" action="{% url "bookdetail" book.id %}">
             {% csrf_token %}
             {% for fm in form %}
             <div class="form-group">

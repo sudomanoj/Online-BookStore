@@ -1,4 +1,4 @@
-from django.urls import path
+from django.urls import path, include
 from manageapp import views
 from django.conf import settings
 from django.conf.urls.static import static
@@ -11,6 +11,9 @@ urlpatterns = [
     path('cart/', views.show_cart, name='showcart'),
     path('wishlist/', views.WishListView.as_view(), name='wishlist'),
     path('rmviawishlist/<int:id>/', views.rmviawishlist, name='removefromwishlist'),
+    path('tinymce/', include('tinymce.urls')),
+    path('addbooks/', views.addbooks, name='addbook'),
+    # path('addreview/', views.addreview, name='addreview'),
     
     
     

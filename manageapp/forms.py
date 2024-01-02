@@ -1,7 +1,8 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm, UserChangeForm, UsernameField, SetPasswordForm, PasswordResetForm
 from django.contrib.auth import get_user_model
-from manageapp.models import User, Customer, Review
+from manageapp.models import User, Customer, Review, Book
+from tinymce.widgets import TinyMCE
 
 
 
@@ -40,12 +41,24 @@ class ReviewForm(forms.ModelForm):
         model = Review
         fields = ['rating', 'review']
         widgets = {
-            'rating': forms.RadioSelect(choices=[(i, i) for i in range(1, 6)], attrs={'class':'form-control'}),
+            'rating': forms.Select(attrs={'class':'form-control'}),
             'review': forms.Textarea(attrs={'class':'form-control', 'rows':4}),
         }
     
-   
-   
+
+class AddBookForm(forms.ModelForm):
+    class Meta:
+        model = Book
+        fields = ['title', 'author', 'description', 'genre', 'book_image', 'selling_price', 'discounted_price']
+        widgets = {
+            'title': forms.TextInput(attrs={'class': 'form-control'}),
+            'author': forms.TextInput(attrs={'class': 'form-control'}),
+            'description': TinyMCE(attrs={'cols': 80, 'rows': 30, 'class':'form-control'}),
+            'genre': forms.Select(attrs={'class': 'form-control'}),
+            'book_image': forms.ClearableFileInput(attrs={'class': 'form-control'}),
+            'selling_price': forms.NumberInput(attrs={'class': 'form-control'}),
+            'discounted_price': forms.NumberInput(attrs={'class': 'form-control'}),
+        }
    
    
    

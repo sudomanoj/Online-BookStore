@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'captcha',
     'manageapp',
+    'tinymce',
     
 ]
 
@@ -123,6 +124,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
 STATIC_URL = 'static/'
+LOGIN_REDIRECT_URL = '/user_login/'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
@@ -136,6 +138,8 @@ MEDIA_URL = '/media/'
 MEDIA_ROOT =  BASE_DIR / 'media'
 
 
+
+
 # Email Configuration
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
@@ -144,3 +148,33 @@ EMAIL_USE_TLS = True
 EMAIL_HOST_USER = config('EMAIL_HOST_USER')
 EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD')
 DEFAULT_FROM_EMAIL = config('EMAIL_HOST_USER')
+
+
+
+# TINYMCE_DEFAULT_CONFIG = {
+#     'height': 360,
+#     'width': 900,
+#     'cleanup_on_startup': True,
+#     'custom_undo_redo_levels': 20,
+#     'selector': 'textarea',
+#     'plugins': 'colorpicker',
+#     'toolbar': 'forecolor backcolor',
+#     # 'theme': 'modern',
+# }
+
+TINYMCE_DEFAULT_CONFIG = {
+    'height': 360,
+    'width': 900,
+    'cleanup_on_startup': True,
+    'custom_undo_redo_levels': 20,
+    'selector': 'textarea',
+    'plugins': 'colorpicker autolink lists link image charmap print preview anchor',
+    'toolbar': 'undo redo | formatselect | bold italic underline strikethrough | alignleft aligncenter alignright alignjustify | outdent indent | numlist bullist | forecolor backcolor | removeformat | charmap link image',
+    'toolbar_sticky': True,
+    'toolbar_mode': 'sliding',
+    'menubar': True,
+    'statusbar': True,
+    'resize': 'both',
+    'content_style': 'body { font-family: "Helvetica Neue",Helvetica,Arial,sans-serif; font-size: 14px; line-height: 1.6; }',
+    # 'theme': 'modern',
+}

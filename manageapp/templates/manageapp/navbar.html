@@ -4,7 +4,10 @@
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ul class="navbar-nav mx-auto mb-2 mb-lg-0">
                 <li class="nav-item mx-5">
-                    <a class="nav-link active" aria-current="page" href='{% url "home" %}'>Add Book</a>
+                    <a class="nav-link active" aria-current="page" href='{% url "home" %}'>Home</a>
+                </li>
+                <li class="nav-item mx-5">
+                    <a class="nav-link active" aria-current="page" href='{% url "addbook" %}'>Add Book</a>
                 </li>
                 
                {% if not request.user.is_authenticated %}
@@ -16,7 +19,7 @@
                 </li>
                 {% else %}
                 <li class="nav-item mx-5">
-                    <a class="nav-link active" aria-current="page" href=''>Logout</a>
+                    <a class="nav-link active" aria-current="page" href='{% url "userlogout" %}'>Logout</a>
                 </li>
                 <li class="nav-item mx-5">
                     <a class="nav-link active" aria-current="page" href='{% url "showcart" %}'>Cart</a>
