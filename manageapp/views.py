@@ -92,6 +92,17 @@ def add_to_cart(request):
     book = Book.objects.get(id=book_id)
     Cart(user=user, book=book).save()
     return redirect('showcart')
+
+@login_required
+def remove_from_cart(request):
+    if request.method == 'POST':
+        user = request.user
+        book_id = request.POST.get('book_id')
+        print(book_id)
+        c = Cart.objects.get(Q(book=book_id) &Q(user=user))
+        c.delete()
+        return redirect('showcart')
+    return HttpResponse('Method Not Allowed!')
     
 @login_required
 def show_cart(request):
@@ -127,6 +138,7 @@ def addbooks(request):
             print(f'Book {request.POST.get("title")} is saved!')
             return redirect('home')
     return render(request, 'manageapp/addbook.html', {'form':form})
+
 
 
 

@@ -59,7 +59,7 @@
 
 {% if request.user.is_authenticated %}
     {% if book_already_in_cart %}
-    <a href="" class="btn btn-primary shadow px-5 py-2">Goto Cart</a>
+    <a href="{% url "showcart" %}" class="btn btn-primary shadow px-5 py-2">Goto Cart</a>
     {% else %}
    <form action="{% url "add-to-cart" %}" class='d-inline'>
     {% csrf_token %}

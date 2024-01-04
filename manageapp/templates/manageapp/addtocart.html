@@ -16,7 +16,9 @@
             </div>
             
         </div>
-        <form action="" method='post'>
+        <form action="{% url "remove_from_cart" %}" method='post'>
+            {% csrf_token %}
+        <input type="hidden" name='book_id' value={{item.book.id}} id='book_id'>
         <div class='d-flex justify-content-center mb-5'>
         <button class="btn btn-danger text-center justify-content-end">Remove</button>
         </div>
