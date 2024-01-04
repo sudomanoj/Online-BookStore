@@ -109,9 +109,9 @@ def show_cart(request):
                     shipping_fee = 50
                 temp_amount = b.quantity * b.book.discounted_price
                 amount += temp_amount
-                total_amount = amount + shipping_fee
-                context = {'cart':cart, 'amount':amount, 'total_amount':total_amount, 'shipping_fee':shipping_fee, 'count':count}
-                return render(request, 'manageapp/addtocart.html', context)
+            total_amount = amount + shipping_fee
+            context = {'cart':cart, 'amount':amount, 'total_amount':total_amount, 'shipping_fee':shipping_fee, 'count':count}
+            return render(request, 'manageapp/addtocart.html', context)
         else:
             return render(request, 'manageapp/emptycart.html')
     
@@ -122,7 +122,7 @@ def addbooks(request):
     if request.method == 'POST':
         form = AddBookForm(request.POST)
         if form.is_valid():
-            book = form.save()
+            book = form.save(commit=False)
             messages.success(request, f'Book {request.POST.get("title")} is saved!')
             print(f'Book {request.POST.get("title")} is saved!')
             return redirect('home')

@@ -2,10 +2,54 @@
 {% load static %}
 {% block title %}Book Detail{% endblock title %}
 {% block main-content %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.5/jszip.min.js"></script>
+{% comment %} <script src="https://cdn.jsdelivr.net/npm/epubjs@3/dist/epub.min.js"></script> {% endcomment %}
+
+
 <div class="container my-5">
  <div class="row">
   <div class="col-sm-6 text-center align-self-center">
-   <img src="{{book.book_image.url}}" alt="" class="img-fluid img-thumbnail">
+   <a href="{{book.book_pdf.url}}"><img src="{{book.book_image.url}}" alt="" class="img-fluid img-thumbnail"></a>
+
+   <div id="pdf-container"></div>
+
+
+   <script>
+    // URL of the PDF file
+    const pdfUrl = "{{book.book_pdf.url}}"; // Replace with the actual URL
+  
+    // Reference to the PDF container element
+    const pdfContainer = document.getElementById('pdf-container');
+  
+    // Load the PDF document
+    pdfjsLib.getDocument(pdfUrl).promise.then(pdfDoc => {
+      // Loop through each page in the PDF
+      for (let pageNum = 1; pageNum <= pdfDoc.numPages; pageNum++) {
+        // Render each page
+        pdfDoc.getPage(pageNum).then(page => {
+          const canvas = document.createElement('canvas');
+          pdfContainer.appendChild(canvas);
+  
+          const context = canvas.getContext('2d');
+          const viewport = page.getViewport({ scale: 1.5 });
+  
+          canvas.width = viewport.width;
+          canvas.height = viewport.height;
+  
+          // Render the page content into the canvas
+          const renderContext = {
+            canvasContext: context,
+            viewport: viewport
+          };
+          page.render(renderContext);
+        });
+      }
+    });
+  </script>
+  
+
+
+
   </div>
   <div class="col-sm-5 offset-sm-1">
    <h2>Book Title: {{book.title}}</h2>
@@ -14,10 +58,11 @@
    <h4 class='text-dark'>Rs. {{book.discounted_price}} <small class="fw-light text-decoration-line-through">{{book.selling_price}}</small></h4> <br>
 
 {% if request.user.is_authenticated %}
-    {% if item_already_in_cart %}
+    {% if book_already_in_cart %}
     <a href="" class="btn btn-primary shadow px-5 py-2">Goto Cart</a>
     {% else %}
-   <form action="" class='d-inline'>
+   <form action="{% url "add-to-cart" %}" class='d-inline'>
+    {% csrf_token %}
     <input type="hidden" name='book_id' value={{book.id}} id='book_id'>
     <button type="submit" class='btn btn-success shadow px-5 py-2'>Add to Cart</button>
    </form>

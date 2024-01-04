@@ -15,7 +15,7 @@
              <div class="col-sm-5 offset-sm-1">
               <h2>Book Title: {{book.title}}</h2>
               <hr>
-              <p>Book Description: {{book.description}}</p> <br>
+              <p>Book Description: {{book.description|safe}}</p> <br>
               <h4 class='text-dark'>Rs. {{book.discounted_price}} <small class="fw-light text-decoration-line-through">{{book.selling_price}}</small></h4> <br>
 
               <form action="{% url "wishlist" %}"  method = 'post' class='d-inline'>

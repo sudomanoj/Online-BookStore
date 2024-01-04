@@ -52,6 +52,7 @@ class Book(models.Model):
     genre = models.CharField(choices=genre_choices, max_length=50)
     description = HTMLField()
     book_image = models.ImageField(upload_to='booksimage')
+    book_pdf = models.FileField(upload_to='bookspdf', blank=True, null=True)
     selling_price = models.FloatField()
     discounted_price = models.FloatField()
     def __str__(self):

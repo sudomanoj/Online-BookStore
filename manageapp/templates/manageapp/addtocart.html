@@ -1,0 +1,32 @@
+{% extends "manageapp/base.html" %}
+{% block main-content %}
+<div class="row">
+    <div class="col-10 mx-auto">
+        {% if cart %}
+        {% for item in cart %}
+        <div class="row">
+            <div class="col-6 mx-auto d-flex ">
+                <img src="{{item.book.book_image.url}}" class='img img-fluid my-4' alt="" width=60px height=90px>
+            <div class='mx-5'>
+                <h5 class=''>Name:{{item.book.title}}</h5>
+            <h6 class="">Price:{{item.book.discounted_price}}</h6>
+            <h6 class="">Quantity:{{item.quantity}}</h6>
+            </div>
+            
+            </div>
+            
+        </div>
+        <form action="" method='post'>
+        <div class='d-flex justify-content-center mb-5'>
+        <button class="btn btn-danger text-center justify-content-end">Remove</button>
+        </div>
+        </form>
+        <hr>
+        {% endfor %}
+        <div class="text-center">
+            <button class="btn btn-success">Checkout</button>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock main-content %}

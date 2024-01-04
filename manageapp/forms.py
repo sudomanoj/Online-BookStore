@@ -1,7 +1,7 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm, UserChangeForm, UsernameField, SetPasswordForm, PasswordResetForm
 from django.contrib.auth import get_user_model
-from manageapp.models import User, Customer, Review, Book
+from manageapp.models import User, Customer, Review, Book, genre_choices
 from tinymce.widgets import TinyMCE
 
 
@@ -54,7 +54,7 @@ class AddBookForm(forms.ModelForm):
             'title': forms.TextInput(attrs={'class': 'form-control'}),
             'author': forms.TextInput(attrs={'class': 'form-control'}),
             'description': TinyMCE(attrs={'cols': 80, 'rows': 30, 'class':'form-control'}),
-            'genre': forms.Select(attrs={'class': 'form-control'}),
+            'genre': forms.Select(choices=genre_choices, attrs={'class': 'form-control'}),
             'book_image': forms.ClearableFileInput(attrs={'class': 'form-control'}),
             'selling_price': forms.NumberInput(attrs={'class': 'form-control'}),
             'discounted_price': forms.NumberInput(attrs={'class': 'form-control'}),
