@@ -13,7 +13,7 @@
             <img src="{{book.book_image.url}}" alt="" class="img-fluid img-thumbnail">
             <h2>Book Title: {{book.title}}</h2>
             <hr>
-            <p>Book Description: {{book.description}}</p> <br>
+            <p>{{book.description|safe }}</p> <br>
             <a href="{% url "removefromwishlist" book.id %}" class="btn btn-danger my-3 text-center">Remove From WishList</a>
         </div>
 

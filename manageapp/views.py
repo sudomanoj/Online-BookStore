@@ -14,7 +14,7 @@ from django.contrib.sites.shortcuts import get_current_site
 from manageapp.tokens import account_activation_token
 from manageapp.models import User, Cart, Customer, Book, Review, WishList
 from django.contrib.auth import login, logout, authenticate
-from django.db.models import Q
+from django.db.models import Q, Avg
 
 
 
@@ -29,8 +29,11 @@ class BookDetailView(LoginRequiredMixin, View):
         book = Book.objects.get(pk=pk)
         book_already_in_cart = False
         reviews = Review.objects.filter(book=book)
+        already_reviewed = Review.objects.filter(Q(user=request.user) & Q(book=book))
+        average_rating = reviews.aggregate(Avg('rating'))['rating__avg']
         count = 0
         form = ReviewForm()
+        ip_addr=request.META.get('REMOTE_ADDR')
         if request.user.is_authenticated:
             book_already_in_cart = Cart.objects.filter(Q(user=request.user) & Q(book=book.id)).exists()
             count = Cart.objects.filter(user=request.user).count()
@@ -39,7 +42,10 @@ class BookDetailView(LoginRequiredMixin, View):
                 'book_already_in_cart':book_already_in_cart,
                 'count':count,
                 'reviews':reviews,
-                'form':form
+                'form':form,
+                'already_reviewed': already_reviewed,
+                'average_rating':average_rating,
+                'ip_address':ip_addr
             }
         return render(request, 'manageapp/bookdetail.html', context=context)
 
@@ -267,7 +273,7 @@ def user_signup(request):
         form = SignupForm(request.POST)
         if form.is_valid():
             user = form.save(commit=False)
-            user.is_verified = False
+            user.is_active = False
             user.save()
             activateEmail(request, user, form.cleaned_data.get('email'))
             return redirect('home')  

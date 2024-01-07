@@ -3,54 +3,20 @@
 {% block title %}Book Detail{% endblock title %}
 {% block main-content %}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.5/jszip.min.js"></script>
-{% comment %} <script src="https://cdn.jsdelivr.net/npm/epubjs@3/dist/epub.min.js"></script> {% endcomment %}
+<!-- Include epub.js library -->
+
+
 
 
 <div class="container my-5">
  <div class="row">
   <div class="col-sm-6 text-center align-self-center">
    <a href="{{book.book_pdf.url}}"><img src="{{book.book_image.url}}" alt="" class="img-fluid img-thumbnail"></a>
-
-   <div id="pdf-container"></div>
-
-
-   <script>
-    // URL of the PDF file
-    const pdfUrl = "{{book.book_pdf.url}}"; // Replace with the actual URL
-  
-    // Reference to the PDF container element
-    const pdfContainer = document.getElementById('pdf-container');
-  
-    // Load the PDF document
-    pdfjsLib.getDocument(pdfUrl).promise.then(pdfDoc => {
-      // Loop through each page in the PDF
-      for (let pageNum = 1; pageNum <= pdfDoc.numPages; pageNum++) {
-        // Render each page
-        pdfDoc.getPage(pageNum).then(page => {
-          const canvas = document.createElement('canvas');
-          pdfContainer.appendChild(canvas);
-  
-          const context = canvas.getContext('2d');
-          const viewport = page.getViewport({ scale: 1.5 });
-  
-          canvas.width = viewport.width;
-          canvas.height = viewport.height;
-  
-          // Render the page content into the canvas
-          const renderContext = {
-            canvasContext: context,
-            viewport: viewport
-          };
-          page.render(renderContext);
-        });
-      }
-    });
-  </script>
-  
-
-
-
   </div>
+
+
+
+
   <div class="col-sm-5 offset-sm-1">
    <h2>Book Title: {{book.title}}</h2>
    <hr>
@@ -88,15 +54,40 @@
    </ul>
   </div>
  </div>
+<h4>Average Rating: {{average_rating}} </h4>
+
+ <a href="#"  class = 'btn btn-danger'id="read-book" >Read Book</a>
+<div id="area"></div>
+
+<script>
+    var urlpath = "{{ book.book_pdf.url }}";
+    var book = ePub(urlpath);
+    var rendition = book.renderTo("area", { width: 600, height: 400 });
+    var displayed = rendition.display();
+    document.getElementById('read-book').addEventListener('click', function() {
+        rendition.display();
+    });
+</script>
+
  <div class="row mt-5">
     <div class="col-sm-10 mx-auto">
         {% if reviews %}
         <h2>Reviews</h2>
   {% for review in reviews %}
+  {% if request.user == review.user %}
+  <p>Your review</p>
+  Review: <p class='text-danger'>{{ review.review }}</p>
+  Rating: <p> {{ review.rating }}</p>
+  <p>{{ review.user.email }}(You) - {{ review.created_at }} </p>
+    
+    <hr>
+  {% else %}
     <p>{{ review.user.email }} - {{ review.created_at }} - Rating: {{ review.rating }}</p>
     <p class='text-danger'>{{ review.review }}</p>
+    {% endif %}
   {% endfor %}
         {% endif %}
+        {% if not already_reviewed %}
         <h2>Add review</h2>
         <form method="post" action="{% url "bookdetail" book.id %}">
             {% csrf_token %}
@@ -108,6 +99,7 @@
             {% endfor %}
             <input type="submit" value="Submit" class="btn btn-primary my-2">
         </form>
+        {% endif %}
     </div>
  </div>
 </div>

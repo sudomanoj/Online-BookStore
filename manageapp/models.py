@@ -10,13 +10,33 @@ class User(AbstractBaseUser, PermissionsMixin):
     last_name = models.CharField(max_length=30)
     is_active = models.BooleanField(default=False)
     is_staff = models.BooleanField(default=True)
-
+    
     objects = UserManager()
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['first_name', 'last_name']
-
+    
+    def save(self, *args, **kwargs):
+        if not hasattr(self, 'profile'):
+            profile = Profile.objects.create(person=self, login_failure_count=0)
+            self.profile = profile
+        if self.is_active:
+            print('hello')
+            self.profile.login_failure_count = 0
+            self.profile.save()
+        super().save(*args, **kwargs)
+    
     def __str__(self):
         return self.email
+    
+class Profile(models.Model):
+    person = models.OneToOneField(User, on_delete=models.CASCADE, related_name='profile')
+    login_failure_count = models.IntegerField(default=0)
+    
+    def __str__(self):
+        return self.person.email
+
+    
+    
 
 
 CITY_CHOICES = (

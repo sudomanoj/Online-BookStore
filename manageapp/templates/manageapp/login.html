@@ -27,5 +27,19 @@
     </form>
     <a href="{% url "passwordresetrequest" %}" class="small">forgot your password?</a>
 </div>
+{% if login_left %}
+{% if messages %}
+    {% for message in messages %}
+    {% if message.tags == 'success' %}
+      <div class="alert alert-success" role="alert">
+        {{ message }}
+      </div>
+    {% elif message.tags == 'warning' %}
+      <div class="alert alert-warning" role="alert">
+        {{ message }}
+    {% endif %}
+    {% endfor %}
+    {% endif %}
+{% endif %}
 </div>
 {% endblock main-content %}
